@@ -1,5 +1,6 @@
 require("dotenv").config();
 const path = require("path");
+const fs = require('fs')
 const cors = require('cors')
 const express = require("express");
 const cookieParser = require("cookie-parser");
@@ -13,6 +14,11 @@ const uploadRoutes = require('./routes/uploadRoutes')
 const connectDB = require("./config/db");
 connectDB();
 
+// ensuring the uploads dir exists
+const uplooadDir = path.join(__dirname, '/uploads')
+if (!fs.existsSync(uplooadDir)){
+  fs.mkdirSync(uplooadDir)
+}
 
 
 
@@ -27,6 +33,9 @@ app.use('/api/category', categoryRoutes)
 app.use('/api/user-info', tokenRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/upload', uploadRoutes)
+
+
+app.use('/uploads', express.static(path.join(__dirname + '/uploads')))
 
 app.listen(process.env.PORT, () => {
   console.log(`server listening on port: ${process.env.PORT}`);
